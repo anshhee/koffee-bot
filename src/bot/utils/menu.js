@@ -7,6 +7,8 @@ import { Markup } from 'telegraf';
 export const getMainMenu = () => {
     return Markup.inlineKeyboard([
         [Markup.button.callback('✨ Create Wallet', 'action_createwallet')],
-        [Markup.button.callback('💰 Check Balance', 'action_balance')]
+        [Markup.button.callback('💰 Check Balance', 'action_balance')],
+        [Markup.button.callback('ℹ️ All Options / Help', 'action_help')]
     ]);
 };
+

@@ -1,4 +1,9 @@
 import dotenv from 'dotenv';
+import dns from 'dns';
+
+// Fix local ISP DNS blocking MongoDB SRV records
+dns.setServers(['8.8.8.8']);
+
 dotenv.config();
 
 import { connectDB } from './config/db.js';
