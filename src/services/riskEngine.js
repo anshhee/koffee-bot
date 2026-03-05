@@ -1,40 +1,49 @@
-import { fetchMintInfo } from './tokenAnalyzer.js';
+import { fetchMintInfo } from "./tokenAnalyzer.js";
+import { fetchLiquidity } from "./liquidityAnalyzer.js";
 
 /**
- * Analyzes the risk of a given token address based on live devnet data.
- * @param {string} tokenAddress - The address of the token to analyze.
- * @returns {Promise<Object>} Structured object containing token data and risk score.
+ * Collects all token metrics needed for analysis
  */
-export const analyzeTokenRisk = async (tokenAddress) => {
-    // Fetch live token data from Solana Devnet
-    const { supply, decimals, mintAuthorityActive } = await fetchMintInfo(tokenAddress);
+const collectTokenMetrics = async (tokenAddress) => {
+    const mintData = await fetchMintInfo(tokenAddress);
+    const liquidityData = await fetchLiquidity(tokenAddress);
 
-    // Keep liquidity mocked for now
-    const liquidityOptions = ["Low", "Moderate", "High"];
-    const liquidity = liquidityOptions[Math.floor(Math.random() * liquidityOptions.length)];
-
-    // Implement a scoring system
-    let riskScore = 100;
-
-    if (mintAuthorityActive) {
-        riskScore -= 30;
-    }
-
-    if (liquidity === "Low") {
-        riskScore -= 25;
-    }
-
-    if (supply > 500_000_000) {
-        riskScore -= 10;
-    }
-
-    // Return a structured object
     return {
         tokenAddress,
-        mintAuthorityActive,
-        liquidity,
-        supply,
-        decimals,
+        mintAuthorityActive: mintData.mintAuthorityActive,
+        supply: mintData.supply,
+        decimals: mintData.decimals,
+        liquidityUSD: liquidityData.liquidityUSD,
+        liquidityLevel: liquidityData.liquidityLevel
+    };
+};
+
+/**
+ * Calculates risk score based on metrics
+ */
+const scoreTokenRisk = (metrics) => {
+    let score = 100;
+
+    if (metrics.mintAuthorityActive) score -= 30;
+    if (metrics.liquidityLevel === "Low") score -= 25;
+    if (metrics.supply > 500_000_000) score -= 10;
+
+    score = Math.max(score, 0);
+
+    return score;
+};
+
+/**
+ * Main risk analysis function
+ */
+export const analyzeTokenRisk = async (tokenAddress) => {
+    const metrics = await collectTokenMetrics(tokenAddress);
+
+    const riskScore = scoreTokenRisk(metrics);
+
+    return {
+        ...metrics,
         riskScore
     };
 };
+
