@@ -1,3 +1,37 @@
+# ☕ KOFFEE
+
+**KOFFEE** is a risk-aware Telegram bot for analyzing Solana tokens.  
+It evaluates token safety by inspecting on-chain mint data, supply metrics, and market liquidity, while maintaining a history of user analyses.
+
+Built with a modular backend architecture using **Node.js**, **Solana Web3**, and **MongoDB**.
+
+---
+
+## ✨ Features
+
+- 🔍 **Token Risk Analysis**
+  - Detects active mint authority
+  - Analyzes token supply
+  - Evaluates liquidity levels
+
+- 📊 **Analysis History**
+  - Stores user token analyses in MongoDB
+  - Retrieve recent analyses with `/history`
+
+- ⚡ **Real-Time On-Chain Data**
+  - Fetches token mint information directly from Solana Devnet
+
+- 🤖 **Telegram Interface**
+  - Simple commands for token inspection
+  - Interactive responses for fast analysis
+
+---
+
+## 🧠 Example Commands
+```bash
+/analyze <token_address>
+/history
+```
 ## 🚀 Features
 
 ### ✅ Implemented
@@ -59,18 +93,22 @@
 
 ## 🏗 Architecture
 ```bash
-koffee/
-├── src/
-│ ├── blockchain/
-│ ├── bot/
-│ │ └── commands/
-│ ├── services/
-│ ├── models/
-│ ├── config/
-│ └── index.js
-├── .env.example
-├── package.json
-└── README.md
+src/
+├── bot/
+│ └── commands/
+│ ├── analyze.js
+│ └── history.js
+│
+├── services/
+│ ├── riskEngine.js
+│ ├── tokenAnalyzer.js
+│ ├── liquidityAnalyzer.js
+│ └── analysisService.js
+│
+├── models/
+│ └── Analysis.js
+│
+└── config/
 ```
 
 ## ⚙️ Local Setup
