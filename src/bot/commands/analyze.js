@@ -35,7 +35,7 @@ export const registerAnalyzeCommand = (bot) => {
             let reportMessage = `📊 **Token Risk Analysis Report**\n\n`;
             reportMessage += `*Token Address:* \`${riskReport.tokenAddress}\`\n`;
             reportMessage += `*Mint Authority Active:* ${riskReport.mintAuthorityActive ? '⚠️ Yes (-30 pts)' : '✅ No'}\n`;
-            reportMessage += `*Liquidity:* ${riskReport.liquidity === 'Low' ? '🔴 Low (-25 pts)' : riskReport.liquidity === 'Moderate' ? '🟡 Moderate' : '🟢 High'}\n`;
+            reportMessage += `*Liquidity:* ${riskReport.liquidityLevel === 'Low' ? '🔴 Low (-25 pts)' : riskReport.liquidityLevel === 'Moderate' ? '🟡 Moderate' : '🟢 High'} ($${riskReport.liquidityUSD.toLocaleString()})\n`;
             reportMessage += `*Supply:* ${riskReport.supply.toLocaleString()} ${riskReport.supply > 500000000 ? '(-10 pts)' : ''}\n\n`;
 
             // Determine risk level emoji based on score
@@ -52,7 +52,7 @@ export const registerAnalyzeCommand = (bot) => {
                     tokenAddress: riskReport.tokenAddress,
                     riskScore: riskReport.riskScore,
                     mintAuthorityActive: riskReport.mintAuthorityActive,
-                    liquidity: riskReport.liquidity,
+                    liquidity: riskReport.liquidityLevel,
                     supply: riskReport.supply,
                 });
             } catch (dbError) {
