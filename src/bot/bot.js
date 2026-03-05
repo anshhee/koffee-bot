@@ -3,6 +3,7 @@ import startCommand from './commands/start.js';
 import createwalletCommand from './commands/createwallet.js';
 import balanceCommand from './commands/balance.js';
 import { registerAnalyzeCommand } from './commands/analyze.js';
+import { registerHistoryCommand } from './commands/history.js';
 
 export const setupBot = (token) => {
     if (!token) {
@@ -22,6 +23,7 @@ export const setupBot = (token) => {
     bot.command('createwallet', createwalletCommand);
     bot.command('balance', balanceCommand);
     registerAnalyzeCommand(bot);
+    registerHistoryCommand(bot);
 
     // Register inline button actions
     bot.action('action_createwallet', async (ctx) => {
@@ -45,6 +47,7 @@ Here are all the available options you can use:
 /createwallet - Generate a new Solana Devnet wallet
 /balance - Check your Devnet SOL balance
 /analyze <token-address> - Analyze the risk of a specific token
+/history - View your recent token analyses
 
 *You can also use the inline menu buttons for quick access!*
         `;

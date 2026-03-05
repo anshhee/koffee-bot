@@ -1,4 +1,5 @@
 import { analyzeTokenRisk } from '../../services/riskEngine.js';
+import { saveAnalysis } from '../../services/analysisService.js';
 
 /**
  * Registers the /analyze command for the bot.
@@ -43,6 +44,21 @@ export const registerAnalyzeCommand = (bot) => {
             else if (riskReport.riskScore < 80) scoreEmoji = '🟡';
 
             reportMessage += `*Risk Score:* **${riskReport.riskScore}/100** ${scoreEmoji}`;
+
+            // Save analysis to DB
+            try {
+                await saveAnalysis({
+                    telegramId: ctx.from.id.toString(),
+                    tokenAddress: riskReport.tokenAddress,
+                    riskScore: riskReport.riskScore,
+                    mintAuthorityActive: riskReport.mintAuthorityActive,
+                    liquidity: riskReport.liquidity,
+                    supply: riskReport.supply,
+                });
+            } catch (dbError) {
+                console.error('Failed to save analysis history:', dbError);
+                // We proceed to send the report even if DB saving fails
+            }
 
             // Remove loading message and send the final report
             await ctx.deleteMessage(loadingMsg.message_id).catch(() => { });
