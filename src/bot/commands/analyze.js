@@ -44,6 +44,11 @@ export const registerAnalyzeCommand = (bot) => {
             let agePenalty = riskReport.tokenAgeLevel === 'Very New' ? ' (-15 pts)' : riskReport.tokenAgeLevel === 'New' ? ' (-5 pts)' : '';
             reportMessage += `*Age:* ${ageStr}${agePenalty}\n`;
 
+            let topHolderPenalty = riskReport.topHolderPercent > 50 ? ' (-20 pts)' : riskReport.topHolderPercent > 20 ? ' (-10 pts)' : '';
+            let top5Penalty = riskReport.top5Percent > 80 ? ' (-15 pts)' : riskReport.top5Percent > 50 ? ' (-5 pts)' : '';
+            reportMessage += `*Top Holder:* ${riskReport.topHolderPercent}%${topHolderPenalty}\n`;
+            reportMessage += `*Top 5 Holders:* ${riskReport.top5Percent}%${top5Penalty}\n`;
+
             reportMessage += `*Supply:* ${riskReport.supply.toLocaleString()} ${riskReport.supply > 500000000 ? '(-10 pts)' : ''}\n\n`;
 
             // Determine risk level emoji based on score

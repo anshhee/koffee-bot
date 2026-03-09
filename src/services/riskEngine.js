@@ -1,6 +1,7 @@
 import { fetchMintInfo } from "./tokenAnalyzer.js";
 import { fetchLiquidity } from "./liquidityAnalyzer.js";
 import { fetchTokenAge } from "./tokenAgeAnalyzer.js";
+import { fetchHolderDistribution } from "./holderAnalyzer.js";
 
 /**
  * Collects all token metrics needed for analysis
@@ -16,6 +17,13 @@ const collectTokenMetrics = async (tokenAddress) => {
         console.error("Could not fetch token age:", err.message);
     }
 
+    let holderData = { topHolderPercent: 0, top5Percent: 0 };
+    try {
+        holderData = await fetchHolderDistribution(tokenAddress);
+    } catch (err) {
+        console.error("Could not fetch holder distribution:", err.message);
+    }
+
     return {
         tokenAddress,
         mintAuthorityActive: mintData.mintAuthorityActive,
@@ -24,7 +32,9 @@ const collectTokenMetrics = async (tokenAddress) => {
         liquidityUSD: liquidityData.liquidityUSD,
         liquidityLevel: liquidityData.liquidityLevel,
         tokenAgeHours: ageData.tokenAgeHours,
-        tokenAgeLevel: ageData.tokenAgeLevel
+        tokenAgeLevel: ageData.tokenAgeLevel,
+        topHolderPercent: holderData.topHolderPercent,
+        top5Percent: holderData.top5Percent
     };
 };
 
@@ -41,6 +51,13 @@ const scoreTokenRisk = (metrics) => {
     // Penalize newer tokens since they have higher risk of rug pull
     if (metrics.tokenAgeLevel === 'Very New') score -= 15;
     if (metrics.tokenAgeLevel === 'New') score -= 5;
+
+    // Penalize highly centralized tokens (high percentage held by top accounts)
+    if (metrics.topHolderPercent > 50) score -= 20;
+    else if (metrics.topHolderPercent > 20) score -= 10;
+
+    if (metrics.top5Percent > 80) score -= 15;
+    else if (metrics.top5Percent > 50) score -= 5;
 
     score = Math.max(score, 0);
 
