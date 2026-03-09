@@ -36,6 +36,14 @@ export const registerAnalyzeCommand = (bot) => {
             reportMessage += `*Token Address:* \`${riskReport.tokenAddress}\`\n`;
             reportMessage += `*Mint Authority Active:* ${riskReport.mintAuthorityActive ? '⚠️ Yes (-30 pts)' : '✅ No'}\n`;
             reportMessage += `*Liquidity:* ${riskReport.liquidityLevel === 'Low' ? '🔴 Low (-25 pts)' : riskReport.liquidityLevel === 'Moderate' ? '🟡 Moderate' : '🟢 High'} ($${riskReport.liquidityUSD.toLocaleString()})\n`;
+
+            let ageStr = riskReport.tokenAgeLevel;
+            if (riskReport.tokenAgeHours !== null) {
+                ageStr += ` (${riskReport.tokenAgeHours.toFixed(1)}h)`;
+            }
+            let agePenalty = riskReport.tokenAgeLevel === 'Very New' ? ' (-15 pts)' : riskReport.tokenAgeLevel === 'New' ? ' (-5 pts)' : '';
+            reportMessage += `*Age:* ${ageStr}${agePenalty}\n`;
+
             reportMessage += `*Supply:* ${riskReport.supply.toLocaleString()} ${riskReport.supply > 500000000 ? '(-10 pts)' : ''}\n\n`;
 
             // Determine risk level emoji based on score

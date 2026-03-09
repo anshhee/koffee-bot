@@ -1,5 +1,6 @@
 import { fetchMintInfo } from "./tokenAnalyzer.js";
 import { fetchLiquidity } from "./liquidityAnalyzer.js";
+import { fetchTokenAge } from "./tokenAgeAnalyzer.js";
 
 /**
  * Collects all token metrics needed for analysis
@@ -8,13 +9,22 @@ const collectTokenMetrics = async (tokenAddress) => {
     const mintData = await fetchMintInfo(tokenAddress);
     const liquidityData = await fetchLiquidity(tokenAddress);
 
+    let ageData = { tokenAgeHours: null, tokenAgeLevel: 'Unknown' };
+    try {
+        ageData = await fetchTokenAge(tokenAddress);
+    } catch (err) {
+        console.error("Could not fetch token age:", err.message);
+    }
+
     return {
         tokenAddress,
         mintAuthorityActive: mintData.mintAuthorityActive,
         supply: mintData.supply,
         decimals: mintData.decimals,
         liquidityUSD: liquidityData.liquidityUSD,
-        liquidityLevel: liquidityData.liquidityLevel
+        liquidityLevel: liquidityData.liquidityLevel,
+        tokenAgeHours: ageData.tokenAgeHours,
+        tokenAgeLevel: ageData.tokenAgeLevel
     };
 };
 
@@ -27,6 +37,10 @@ const scoreTokenRisk = (metrics) => {
     if (metrics.mintAuthorityActive) score -= 30;
     if (metrics.liquidityLevel === "Low") score -= 25;
     if (metrics.supply > 500_000_000) score -= 10;
+
+    // Penalize newer tokens since they have higher risk of rug pull
+    if (metrics.tokenAgeLevel === 'Very New') score -= 15;
+    if (metrics.tokenAgeLevel === 'New') score -= 5;
 
     score = Math.max(score, 0);
 
