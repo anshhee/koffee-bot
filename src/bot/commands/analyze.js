@@ -6,7 +6,7 @@ import { saveAnalysis } from '../../services/analysisService.js';
  * @param {Object} bot - The Telegraf bot instance.
  */
 export const registerAnalyzeCommand = (bot) => {
-    bot.command('analyze', async (ctx) => {
+    bot.command(['analyze', 'analyse'], async (ctx) => {
         try {
             // Parse token address from user input
             const messageText = ctx.message.text || '';

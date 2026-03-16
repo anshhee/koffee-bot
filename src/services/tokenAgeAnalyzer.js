@@ -51,8 +51,12 @@ const fetchTokenAge = async (tokenAddress) => {
         let oldestSignatureInfo = null;
         let before = undefined;
 
-        // Loop to fetch all signatures and find the oldest one
-        while (true) {
+        let pages = 0;
+        const MAX_PAGES = 5;
+
+        // Loop to fetch signatures and find the oldest one, with a max page limit
+        while (pages < MAX_PAGES) {
+            pages++;
             const signatures = await connection.getSignaturesForAddress(mintPublicKey, {
                 before,
                 limit: 1000

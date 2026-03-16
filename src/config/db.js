@@ -18,7 +18,8 @@ export const connectDB = async (retries = MAX_RETRIES) => {
 
     if (retries > 0) {
       console.log(`⏳ Retrying in ${RETRY_DELAY / 1000} seconds... (${retries} retries left)`);
-      setTimeout(() => connectDB(retries - 1), RETRY_DELAY);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      await connectDB(retries - 1);
     } else {
       console.error('❌ Max retries reached. Exiting...');
       process.exit(1);
