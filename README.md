@@ -152,17 +152,3 @@ No real funds are used.
 
 ---
 
-Just replace:
-
-- `YOUR_USERNAME`
-- `YOUR_BOT_USERNAME`
-
-Commit and push.
-
-This will render cleanly with:
-- Proper bullets
-- Proper code blocks
-- No formatting issues
-
-If you want next, we can add professional badges at the top of the README to make it look even stronger ☕🔥
-```
